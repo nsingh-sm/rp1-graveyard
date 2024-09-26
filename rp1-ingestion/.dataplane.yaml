@@ -1,0 +1,132 @@
+name: rp1-ingestion
+type: python3.9
+version: 0.1.0-dev0
+description: Ingest data from RP1's bucket into BSM's intake bucket, and publish it to the Data Interface
+
+stages:
+- name: main
+  entrypoint: "main.py"
+  inputs:
+  - name: rp1-bucket
+    type: string
+    default: secondmeasure-rp1
+  - name: rp1-prefix
+    type: string
+    default: sftp/
+  - name: bsm-intake-bucket
+    type: string
+    default: bsm-prod-dataset-raw-intake-use2
+  - name: bsm-intake-prefix
+    type: string
+    default: rp1/places/
+  outputs:
+  - name: raw_rp1_descriptors
+    description: contains descriptors for transactions seen on the Mastercard network
+    format: parquet
+    schema:
+    - name: original_name
+      description: name of merchant, as seen in transactions
+      type: varchar
+    - name: original_city
+      description: city, as seen in transactions
+      type: varchar
+    - name: original_state
+      description: state, as seen in transactions
+      type: varchar
+    - name: merchant_descriptor
+      description: Concatenation of the 3 original columns.
+      type: varchar
+    - name: merchant_market_hierarchy_id
+      description: Mastercard's internal identifier for a real-world merchant
+      type: integer
+    - name: period_start_date
+      description: Start date of period during which transactions were considered. Derived as period_end_date minus 3 months
+      type: date
+    - name: period_end_date
+      description: Last date of period during which transactions were considered. Derived from filename delivered by the vendor
+      type: date
+      partition: true
+    - name: delivery_date
+      description: Date on which data was delivered by the vendor
+      type: date
+      partition: true
+  - name: raw_rp1_locations
+    description: Contains metadata about every merchant_market_hierarchy_id for which transactions were seen on the Mastercard network
+    format: parquet
+    schema:
+    - name: merchant_market_hierarchy_id
+      description: (PK) Mastercard's internal identifier for a real-world merchant
+      type: integer
+    - name: merchant_name
+      type: varchar
+    - name: merchant_name_cleansed
+      type: varchar
+    - name: address
+      type: varchar
+    - name: address_cleansed
+      type: varchar
+    - name: city_name
+      type: varchar
+    - name: city_name_cleansed
+      type: varchar
+    - name: state_province_code
+      type: varchar
+    - name: state_province_code_cleansed
+      type: varchar
+    - name: postal_code
+      type: varchar
+    - name: postal_code_cleansed
+      type: varchar
+    - name: country_code
+      type: varchar
+    - name: country_code_cleansed
+      type: varchar
+    - name: latitude
+      type: varchar
+    - name: longitude
+      type: varchar
+    - name: geocoding_quality_indicator
+      type: varchar
+    - name: phone_number
+      type: varchar
+    - name: phone_number_cleansed
+      type: varchar
+    - name: merchant_category_code
+      type: varchar
+    - name: legal_corporate_name
+      type: varchar
+    - name: legal_corporate_name_cleansed
+      type: varchar
+    - name: aggregate_merchant_id
+      type: varchar
+    - name: aggregate_merchant_name
+      type: varchar
+    - name: key_aggregate_merchant_id
+      type: varchar
+    - name: parent_aggregate_merchant_id
+      type: varchar
+    - name: parent_aggregate_merchant_name
+      type: varchar
+    - name: msa_code
+      type: varchar
+    - name: naics_code
+      type: varchar
+    - name: dma_code
+      type: varchar
+    - name: industry
+      type: varchar
+    - name: super_industry
+      type: varchar
+    - name: dun_bradstreet_number
+      type: varchar
+    - name: period_start_date
+      description: Start date of period during which transactions were considered. Derived as period_end_date minur 3 months
+      type: date
+    - name: period_end_date
+      description: Last date of period during which transactions were considered. Derived from filename delivered by the vendor
+      type: date
+      partition: true
+    - name: delivery_date
+      description: Date on which data was delivered by the vendor
+      type: date
+      partition: true

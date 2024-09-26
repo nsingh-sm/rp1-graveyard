@@ -1,0 +1,142 @@
+TABLE_LEVEL:
+- expectation_type: expect_compound_columns_to_be_unique
+  kwargs:
+    column_list:
+    - original_name
+    - original_city
+    - original_state
+    - delivery_date
+    - period_start_date
+    ignore_row_if: any_value_is_missing
+  meta:
+    notes: Null values are sometimes input to these fields. This messes up uniqueness. any_value_is_missing only considers non-null rows for the uniqueness constraint.
+  critical: true
+  disabled: false
+- expectation_type: expect_table_columns_to_match_set
+  kwargs:
+    column_set:
+    - delivery_date
+    - merchant_market_hierarchy_id
+    - original_city
+    - original_name
+    - original_state
+    - merchant_descriptor
+    - period_end_date
+    - period_start_date
+    exact_match: true
+  meta: {}
+  critical: true
+  disabled: false
+- expectation_type: expect_column_pair_values_a_to_be_greater_than_b
+  kwargs:
+    column_A: period_end_date
+    column_B: period_start_date
+    or_equal: false
+  meta:
+    notes: This is ok to have or_equal false as long as we don't have daily deliveries.
+FIELD_LEVEL:
+  merchant_descriptor: []
+  delivery_date:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DateType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      max_value:
+        $PARAMETER: DATE_TODAY
+      min_value: '2020-04-01'
+      parse_strings_as_datetimes: false
+    meta:
+      notes: 2020-04-01 was the first descriptors delivery
+    critical: false
+    disabled: false
+  merchant_market_hierarchy_id:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: LongType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_match_regex_list
+    kwargs:
+      regex_list:
+      - '[0-9]+$'
+    meta: {}
+    critical: true
+    disabled: false
+  original_city:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: true
+    disabled: false
+  original_name:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: true
+    disabled: false
+  original_state:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.5
+    meta: {}
+    critical: true
+    disabled: false
+  period_end_date:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DateType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  period_start_date:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DateType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false

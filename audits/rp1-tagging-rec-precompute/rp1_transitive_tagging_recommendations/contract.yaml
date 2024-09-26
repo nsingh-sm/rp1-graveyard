@@ -1,0 +1,502 @@
+TABLE_LEVEL:
+- expectation_type: expect_compound_columns_to_be_unique
+  kwargs:
+    column_list:
+    - dp4_merchant_name
+    - dp4_merchant_state
+    - dp4_merchant_city_name
+    - dp4_merchant_category_xcd
+    - vendor_channel
+    - rp1_mmhid
+    - rp1_original_name_trimmed
+    - rp1_merchant_name_cleansed
+    - rp1_phone_number_cleansed
+    - rp1_address_cleansed
+    - transitive_features
+    - transitive_vendor_primary_merchant
+    ignore_row_if: never
+  meta: {}
+  critical: true
+  disabled: false
+- expectation_type: expect_table_columns_to_match_set
+  kwargs:
+    column_set:
+    - clean_aggregate_merchant_name
+    - clean_parent_aggregate_merchant_name
+    - dp4_merchant_category_xcd
+    - dp4_merchant_city_name
+    - dp4_merchant_name
+    - dp4_merchant_state
+    - first_seen
+    - join_methodology
+    - last_seen
+    - n_members
+    - n_txns
+    - pct_transitive_vendor_primary_merchant_txns
+    - pct_vendor_primary_merchant_txns
+    - rp1_address_cleansed
+    - rp1_city_name_cleansed
+    - rp1_merchant_name_cleansed
+    - rp1_mmhid
+    - rp1_original_name_trimmed
+    - rp1_phone_number_cleansed
+    - rp1_state_province_code_cleansed
+    - sum_transaction_amt
+    - sum_purchase_amt
+    - transitive_features
+    - transitive_vendor_primary_merchant
+    - transitivity_distribution
+    - transitivity_strength
+    - vendor_channel
+    - vendor_intermediaries
+    - vendor_primary_merchant
+    exact_match: true
+  meta: {}
+  critical: true
+  disabled: false
+- expectation_type: expect_column_pair_values_a_to_be_greater_than_b
+  kwargs:
+    column_A: last_seen
+    column_B: first_seen
+    or_equal: true
+  meta: {}
+  critical: true
+  disabled: false
+FIELD_LEVEL:
+  clean_aggregate_merchant_name:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: false
+    disabled: false
+  clean_parent_aggregate_merchant_name:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: false
+    disabled: false
+  dp4_merchant_category_xcd:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: false
+    disabled: false
+  dp4_merchant_city_name:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: false
+    disabled: false
+  dp4_merchant_name:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: false
+    disabled: false
+  dp4_merchant_state:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: false
+    disabled: false
+  first_seen:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DateType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: false
+    disabled: false
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      max_value:
+        $PARAMETER: DATE_YESTERDAY
+      min_value: "2016-01-01"
+      parse_strings_as_datetimes: true
+    meta:
+      notes: between 2016-01-01 and DATE_YESTERDAY
+    critical: true
+    disabled: false
+  join_methodology:
+  - expectation_type: expect_column_distinct_values_to_contain_set
+    kwargs:
+      value_set: &id001
+      - exact_basic
+      - exact_processed_city
+      - exact_without_city
+      - startswith_basic
+      - startswith_processed_city
+      - startswith_without_city
+    meta: {}
+    critical: false
+    disabled: false
+  - expectation_type: expect_column_values_to_be_in_set
+    kwargs:
+      mostly: 1.0
+      value_set: *id001
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: false
+    disabled: false
+  - expectation_type: expect_column_most_common_value_to_be_in_set
+    kwargs:
+      value_set:
+      - exact_basic
+    meta: {}
+    critical: false
+    disabled: false
+  last_seen:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DateType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: false
+    disabled: false
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      max_value:
+        $PARAMETER: DATE_YESTERDAY
+      min_value: "2016-01-01"
+      parse_strings_as_datetimes: true
+    meta:
+      notes: between 2016-01-01 and DATE_YESTERDAY
+    critical: true
+    disabled: false
+  n_members:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: LongType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      max_value: null
+      min_value: 0.0
+      strict_max: false
+      strict_min: false
+    meta: {}
+  n_txns:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: LongType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      max_value: null
+      min_value: 1.0
+      strict_max: false
+      strict_min: false
+    meta: {}
+  pct_transitive_vendor_primary_merchant_txns:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DoubleType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      max_value: null
+      min_value: 0.0
+      strict_max: false
+      strict_min: false
+    meta: {}
+  pct_vendor_primary_merchant_txns:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DoubleType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      max_value: 100.0
+      min_value: 0.0
+      strict_max: false
+      strict_min: false
+    meta: {}
+  rp1_address_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  rp1_city_name_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  rp1_merchant_name_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  rp1_mmhid:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: false
+    disabled: false
+  - expectation_type: expect_column_values_to_match_regex_list
+    kwargs:
+      regex_list:
+      - '[0-9]+$'
+    meta: {}
+    critical: true
+    disabled: false
+  rp1_original_name_trimmed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: false
+    disabled: false
+  rp1_phone_number_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  rp1_state_province_code_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  sum_transaction_amt:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DoubleType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  sum_purchase_amt:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DoubleType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  transitive_features:
+  - expectation_type: expect_column_distinct_values_to_contain_set
+    kwargs:
+      value_set: &id002
+      - clean_aggregate_merchant_name
+      - rp1_mmhid
+      - rp1_mmhid, dp4_merchant_category_xcd
+    meta: {}
+    critical: false
+    disabled: false
+  - expectation_type: expect_column_values_to_be_in_set
+    kwargs:
+      mostly: 1.0
+      value_set: *id002
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  transitive_vendor_primary_merchant:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  transitivity_distribution:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  transitivity_strength:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DoubleType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  vendor_channel:
+  - expectation_type: expect_column_distinct_values_to_contain_set
+    kwargs:
+      value_set: &id003
+      - online
+      - retail
+    meta: {}
+    critical: false
+    disabled: false
+  - expectation_type: expect_column_values_to_be_in_set
+    kwargs:
+      mostly: 1.0
+      value_set: *id003
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: false
+    disabled: false
+  - expectation_type: expect_column_most_common_value_to_be_in_set
+    kwargs:
+      value_set:
+      - retail
+    meta: {}
+    critical: false
+    disabled: false
+  vendor_intermediaries:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: ArrayType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  vendor_primary_merchant:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false

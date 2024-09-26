@@ -1,0 +1,49 @@
+[tool.poetry]
+name = "rp1-transaction-enrichment"
+version = "0.1.0-dev0"
+description = "Join dp4 tranactions with rp1 metadata"
+authors = ["Navjot Singh <nsingh375@bloomberg.net>"]
+
+[[tool.poetry.source]]
+default = true
+name = 'artifactory'
+url = 'https://artprod.dev.bloomberg.com/artifactory/api/pypi/bloomberg-pypi/simple'
+
+[tool.poetry.dependencies]
+python = "^3.9"
+click = "^8.1.3"
+black = "^23.7.0"
+
+[tool.poetry.dev-dependencies]
+pyspark = {extras = ["sql"], version = "3.1.3"}
+black = "^23.3.0"
+pytest = "^7.3.2"
+isort = "^5.12"
+coverage = "^7.2.7"
+chispa = "^0.9.2"
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+atomic = true
+line_length = 120
+force_sort_within_sections = true
+force_alphabetical_sort_within_sections = true
+known_first_party = "rp1-transaction-enrichment"
+src_paths = "src,tests"
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+
+[tool.coverage.report]
+omit = [
+    "tests/*",
+]
+precision = 2
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover"
+]

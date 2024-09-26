@@ -1,0 +1,105 @@
+name: rp1-tagging-rec-precompute
+type: pyspark3.4
+version: 1.2.1
+description: Precompute transitive relationships with RP1 metadata to suggest tagging opportunities
+
+stages:
+- name: main
+  entrypoint: "local:///opt/app/main.py"
+  inputs:
+  - name: rp1-transaction-descriptions-summary
+    type: s3-path
+  - name: brand-company-bridge
+    type: s3-path
+  outputs:
+  - name: rp1_transitive_tagging_recommendations
+    format: parquet
+    schema:
+    - name: dp4_merchant_name
+      type: varchar
+      description: (See standardized transactions)
+    - name: dp4_merchant_state
+      type: varchar
+      description: (See standardized transactions)
+    - name: dp4_merchant_city_name
+      type: varchar
+      description: (See standardized transactions)
+    - name: dp4_merchant_category_xcd
+      type: varchar
+      description: (See standardized transactions)
+    - name: vendor_primary_merchant
+      type: varchar
+      description: (See vendor matching)
+    - name: vendor_intermediaries
+      type: array(varchar)
+      description: (See vendor matching)
+    - name: vendor_channel
+      type: varchar
+      description: (See vendor matching)
+    - name: join_methodology
+      type: varchar
+      description: (See rp1 transaction enrichment)
+    - name: rp1_original_name_trimmed
+      type: varchar
+      description: (See rp1 transaction enrichment)
+    - name: rp1_mmhid
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_merchant_name_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_phone_number_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_address_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_city_name_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_state_province_code_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: clean_aggregate_merchant_name
+      type: varchar
+      description: (See rp1 standardization)
+    - name: clean_parent_aggregate_merchant_name
+      type: varchar
+      description: (See rp1 standardization)
+    - name: n_txns
+      type: integer
+      description: (See rp1 transaction enrichment)
+    - name: n_members
+      type: integer
+      description: (See rp1 transaction enrichment)
+    - name: sum_transaction_amt
+      type: double
+      description: (See rp1 transaction enrichment)
+    - name: sum_purchase_amt
+      type: double
+      description: (See rp1 transaction enrichment)
+    - name: first_seen
+      type: date
+      description: (See rp1 transaction enrichment)
+    - name: last_seen
+      type: date
+      description: (See rp1 transaction enrichment)
+    - name: pct_vendor_primary_merchant_txns
+      type: double
+      description: Percentage of transactions a row's n_txns constitutes for its vendor_primary_merchant
+    - name: transitive_features
+      type: varchar
+      description: Features used for transitivity mapping
+    - name: transitivity_strength
+      type: double
+      description: Percentage of transitive_features txns corresponding to transitive_vendor_primary_merchant
+    - name: transitivity_distribution
+      type: varchar
+      description: Distribution of vendor_primary_merchants to which transitive_features correspond
+    - name: pct_transitive_vendor_primary_merchant_txns
+      type: double
+      description: Percentage of transactions a row's n_txns constitutes for its transitive_vendor_primary_merchant
+    - name: transitive_vendor_primary_merchant
+      type: varchar
+      description: Suggested vendor_primary_merchant after transitivity mapping using transitive_features
+      partition: true

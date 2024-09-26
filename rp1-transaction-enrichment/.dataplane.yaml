@@ -1,0 +1,465 @@
+name: rp1-transaction-enrichment
+type: pyspark3.4
+version: 1.2.0
+description: Join dp4 tranactions with rp1 metadata
+
+stages:
+- name: main
+  entrypoint: "local:///opt/app/main.py"
+  inputs:
+  - name: enriched-transactions
+    type: s3-path
+    description: Path to enriched_transactions table.
+  - name: standardized-rp1-descriptors
+    type: s3-path
+    description: Path to the output of standardized descriptors from rp1 data.
+  - name: standardized-rp1-locations
+    type: s3-path
+    description: Path to the output of standardized locations from rp1 data.
+  outputs:
+  - name: rp1_enriched_transactions
+    format: parquet
+    schema:
+    - name: dp4_transaction_id
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_account_id
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_member_id
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_card_type_xcd
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_cardholder_zip3
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_cardholder_birth_decade
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_card_entry_code
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_merchant_category_xcd
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_merchant_zip5
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_merchant_name
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_merchant_city_name
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_merchant_state
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_transaction_amt
+      type: double
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_transaction_cashback_amt
+      type: double
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_transaction_iso_currency_code
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_transaction_date
+      type: date
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_transaction_time
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_terminal_type_xcd
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_transaction_category_xcd
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_transaction_type_cd
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_cardholder_present_xflg
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_portfolio_code
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_is_merchant_mod
+      type: boolean
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_portfolio_name_hash
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_panel_member_flag
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_duplicate_flag
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: dp4_decision_xcd
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: purchase_amount
+      type: double
+      description: (Propagated from Standardized Transactions)
+    - name: merchant_city_lat
+      type: double
+      description: (Propagated from Standardized Transactions)
+    - name: merchant_city_lng
+      type: double
+      description: (Propagated from Standardized Transactions)
+    - name: geo_state
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: geo_city
+      type: varchar
+      description: (Propagated from Standardized Transactions)
+    - name: extracted_merchant_phone_numbers
+      type: array(varchar)
+      description: (Propagated from Standardized Transactions)
+    - name: extracted_merchant_websites
+      type: array(varchar)
+      description: (Propagated from Standardized Transactions)
+    - name: is_debit
+      type: boolean
+      description: (Propagated from Standardized Transactions)
+    - name: is_usd
+      type: boolean
+      description: (Propagated from Standardized Transactions)
+    - name: is_purchase_type
+      type: boolean
+      description: (Propagated from Standardized Transactions)
+    - name: is_authorized
+      type: boolean
+      description: (Propagated from Standardized Transactions)
+    - name: is_obfuscated
+      type: boolean
+      description: (Propagated from Standardized Transactions)
+    - name: is_frozen_panel_member
+      type: boolean
+      description: (Propagated from Standardized Transactions)
+    - name: filter_is_standard_dp4
+      type: boolean
+      description: (Propagated from Standardized Transactions)
+    - name: clean_merchant_name
+      type: varchar
+      description: (Propagated from Vendor Matching)
+    - name: vendor_matched_clauses
+      type: array(row(vendor varchar, type varchar, index integer))
+      description: (Propagated from Vendor Matching)
+    - name: vendor_matched_brands
+      type: array(varchar)
+      description: (Propagated from Vendor Matching)
+    - name: vendor_primary_merchant
+      type: varchar
+      description: (Propagated from Vendor Matching)
+    - name: vendor_intermediaries
+      type: array(varchar)
+      description: (Propagated from Vendor Matching)
+    - name: vendor_channel
+      type: varchar
+      description: (Propagated from Vendor Matching)
+    - name: use_txn_location
+      type: boolean
+      description: (Propagated from Vendor Matching)
+    - name: sanitized_merchant_name
+      type: varchar
+      description: (Propagated from Enriched Transactions)
+    - name: merchant_name_sanitization_pattern
+      type: varchar
+      description: (Propagated from Enriched Transactions)
+    - name: lat
+      type: double
+      description: (Propagated from Enriched Transactions)
+    - name: lng
+      type: double
+      description: (Propagated from Enriched Transactions)
+    - name: county_fp
+      type: varchar
+      description: (Propagated from Enriched Transactions)
+    - name: imputed_city
+      type: varchar
+      description: (Propagated from Enriched Transactions)
+    - name: imputed_county_fp
+      type: varchar
+      description: (Propagated from Enriched Transactions)
+    - name: imputed_state
+      type: varchar
+      description: (Propagated from Enriched Transactions)
+    - name: location_is_imputed
+      type: boolean
+      description: (Propagated from Enriched Transactions)
+    - name: is_transaction_duplicate
+      type: boolean
+      description: (Propagated from Enriched Transactions)
+    - name: is_enriched
+      type: boolean
+      description: (Propagated from Enriched Transactions)
+    - name: is_trackable_primary_merchant
+      type: boolean
+      description: (Propagated from Enriched Transactions)
+    - name: trackable_intermediaries
+      type: array(varchar)
+      description: (Propagated from Enriched Transactions)
+    - name: is_outlier
+      type: boolean
+      description: (Propagated from Enriched Transactions)
+    - name: join_methodology
+      type: varchar
+      description: Methodology used to join the dp4 transaction with an rp1 mmhid
+    - name: n_mmhids_mapped
+      type: integer
+      description: Fuzzy joins can cause 1 txn to map to many mmhids. This column represents the number of mmhids the txn is mapped to.
+    - name: rp1_merchant_name_cleansed
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_legal_corporate_name_cleansed
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_geocoding_quality_indicator
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_phone_number_cleansed
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_latitude
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_longitude
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_address_cleansed
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_postal_code_cleansed
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_city_name_cleansed
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_state_province_code_cleansed
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: clean_aggregate_merchant_name
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: clean_parent_aggregate_merchant_name
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_msa_code
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_naics_code
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_mmhid
+      type: varchar
+      description: (Propagated from rp1 standardization)
+    - name: rp1_original_name_trimmed
+      type: varchar
+      description: trimmed version of rp1_original_name from RP1 descriptors table.
+    - name: dp4_file_date
+      type: date
+      description: (See standardized transactions)
+      partition: true
+  - name: rp1_transaction_descriptions_summary
+    format: parquet
+    schema:
+    - name: dp4_merchant_name
+      type: varchar
+      description: (See standardized transactions)
+    - name: dp4_merchant_state
+      type: varchar
+      description: (See standardized transactions)
+    - name: dp4_merchant_city_name
+      type: varchar
+      description: (See standardized transactions)
+    - name: dp4_merchant_category_xcd
+      type: varchar
+      description: (See standardized transactions)
+    - name: vendor_primary_merchant
+      type: varchar
+      description: (See vendor matching)
+    - name: vendor_intermediaries
+      type: array(varchar)
+      description: (See vendor matching)
+    - name: vendor_channel
+      type: varchar
+      description: (See vendor matching)
+    - name: join_methodology
+      type: varchar
+      description: Methodology used to join the dp4 transaction with an rp1 mmhid
+    - name: n_mmhids_mapped
+      type: integer
+      description: Fuzzy joins can cause 1 txn to map to many mmhids. This column represents the number of mmhids the txn is mapped to.
+    - name: rp1_original_name_trimmed
+      type: varchar
+      description: trimmed version of rp1_original_name from places descriptors table.
+    - name: rp1_mmhid
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_merchant_name_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_legal_corporate_name_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_geocoding_quality_indicator
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_phone_number_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_latitude
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_longitude
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_address_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_postal_code_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_city_name_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_state_province_code_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: clean_aggregate_merchant_name
+      type: varchar
+      description: (See rp1 standardization)
+    - name: clean_parent_aggregate_merchant_name
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_msa_code
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_naics_code
+      type: varchar
+      description: (See rp1 standardization)
+    - name: n_txns
+      type: integer
+      description: Number of transactions corresponding to this set of grouped attributes
+    - name: n_members
+      type: integer
+      description: Number of distinct dp4_member_id for transactions corresponding to this set of grouped attributes
+    - name: sum_transaction_amt
+      type: double
+      description: Sum of dp4_transaction_amt for transactions corresponding to this set of grouped attributes
+    - name: sum_purchase_amt
+      type: double
+      description: Sum of purchase_amount for transactions corresponding to this set of grouped attributes
+    - name: first_seen
+      type: date
+      description: Date on which a transaction for this set of grouped attributes was seen for the first time
+    - name: last_seen
+      type: date
+      description: Date on which a transaction for this set of grouped attributes was seen for the last time
+  - name: rp1_transaction_descriptions_summary_monthly
+    format: parquet
+    schema:
+    - name: dp4_merchant_name
+      type: varchar
+      description: (See standardized transactions)
+    - name: dp4_merchant_state
+      type: varchar
+      description: (See standardized transactions)
+    - name: dp4_merchant_city_name
+      type: varchar
+      description: (See standardized transactions)
+    - name: dp4_merchant_category_xcd
+      type: varchar
+      description: (See standardized transactions)
+    - name: vendor_primary_merchant
+      type: varchar
+      description: (See vendor matching)
+    - name: vendor_intermediaries
+      type: array(varchar)
+      description: (See vendor matching)
+    - name: vendor_channel
+      type: varchar
+      description: (See vendor matching)
+    - name: imputed_state
+      type: varchar
+      description: (See enriched transactions)
+    - name: imputed_city
+      type: varchar
+      description: (See enriched transactions)
+    - name: location_is_imputed
+      type: boolean
+      description: (See enriched transactions)
+    - name: join_methodology
+      type: varchar
+      description: Methodology used to join the dp4 transaction with an rp1 mmhid
+    - name: n_mmhids_mapped
+      type: integer
+      description: Fuzzy joins can cause 1 txn to map to many mmhids. This column represents the number of mmhids the txn is mapped to.
+    - name: rp1_original_name_trimmed
+      type: varchar
+      description: trimmed version of rp1_original_name from places descriptors table.
+    - name: rp1_mmhid
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_merchant_name_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_legal_corporate_name_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_geocoding_quality_indicator
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_phone_number_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_latitude
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_longitude
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_address_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_postal_code_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_city_name_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_state_province_code_cleansed
+      type: varchar
+      description: (See rp1 standardization)
+    - name: clean_aggregate_merchant_name
+      type: varchar
+      description: (See rp1 standardization)
+    - name: clean_parent_aggregate_merchant_name
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_msa_code
+      type: varchar
+      description: (See rp1 standardization)
+    - name: rp1_naics_code
+      type: varchar
+      description: (See rp1 standardization)
+    - name: n_txns
+      type: integer
+      description: Number of transactions corresponding to this set of grouped attributes
+    - name: n_members
+      type: integer
+      description: Number of distinct dp4_member_id for transactions corresponding to this set of grouped attributes
+    - name: sum_transaction_amt
+      type: double
+      description: Sum of dp4_transaction_amt for transactions corresponding to this set of grouped attributes
+    - name: sum_purchase_amt
+      type: double
+      description: Sum of purchase_amount for transactions corresponding to this set of grouped attributes
+    - name: txn_month
+      type: date
+      partition: true
+      description: dp4_transaction_date truncated to a month

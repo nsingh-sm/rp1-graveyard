@@ -1,0 +1,488 @@
+TABLE_LEVEL:
+- expectation_type: expect_compound_columns_to_be_unique
+  kwargs:
+    column_list:
+    - merchant_market_hierarchy_id
+    - delivery_date
+  meta: {}
+  critical: true
+  disabled: false
+- expectation_type: expect_table_columns_to_match_set
+  kwargs:
+    column_set:
+    - address
+    - address_cleansed
+    - aggregate_merchant_id
+    - aggregate_merchant_name
+    - city_name
+    - city_name_cleansed
+    - country_code
+    - country_code_cleansed
+    - delivery_date
+    - dma_code
+    - dun_bradstreet_number
+    - geocoding_quality_indicator
+    - industry
+    - key_aggregate_merchant_id
+    - latitude
+    - legal_corporate_name
+    - legal_corporate_name_cleansed
+    - longitude
+    - merchant_category_code
+    - merchant_market_hierarchy_id
+    - merchant_name
+    - merchant_name_cleansed
+    - msa_code
+    - naics_code
+    - parent_aggregate_merchant_id
+    - parent_aggregate_merchant_name
+    - period_end_date
+    - period_start_date
+    - phone_number
+    - phone_number_cleansed
+    - postal_code
+    - postal_code_cleansed
+    - state_province_code
+    - state_province_code_cleansed
+    - super_industry
+    exact_match: true
+  meta: {}
+  critical: true
+  disabled: false
+- expectation_type: expect_column_pair_values_a_to_be_greater_than_b
+  kwargs:
+    column_A: period_end_date
+    column_B: period_start_date
+    or_equal: false
+  meta:
+    notes: This is ok to have or_equal false as long as we don't have daily deliveries.
+FIELD_LEVEL:
+  address:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: false
+    disabled: false
+  address_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: false
+    disabled: false
+  aggregate_merchant_id:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_match_regex_list
+    kwargs:
+      regex_list:
+      - '[0-9]+$'
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  aggregate_merchant_name:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  city_name:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  city_name_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  country_code:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  country_code_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  delivery_date:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DateType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      max_value:
+        $PARAMETER: DATE_TODAY
+      min_value: '2020-03-12'
+      parse_strings_as_datetimes: false
+    meta:
+      notes: 2020-03-13 was the first locations delivery
+    critical: false
+    disabled: false
+  dma_code:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: true
+    disabled: false
+  dun_bradstreet_number:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  geocoding_quality_indicator:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: true
+    disabled: false
+  industry:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  key_aggregate_merchant_id:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_match_regex_list
+    kwargs:
+      regex_list:
+      - '[0-9]+$'
+    meta: {}
+    critical: true
+    disabled: false
+  latitude:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: true
+    disabled: false
+  legal_corporate_name:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  legal_corporate_name_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  longitude:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: true
+    disabled: false
+  merchant_category_code:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: false
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  merchant_market_hierarchy_id:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: LongType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_match_regex_list
+    kwargs:
+      regex_list:
+      - '[0-9]+$'
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  merchant_name:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: true
+    disabled: false
+  merchant_name_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: true
+    disabled: false
+  msa_code:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  naics_code:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  parent_aggregate_merchant_id:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_match_regex_list
+    kwargs:
+      regex_list:
+      - '[0-9]+$'
+    meta: {}
+    critical: true
+    disabled: false
+  parent_aggregate_merchant_name:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  period_end_date:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DateType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  period_start_date:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DateType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  phone_number:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  phone_number_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  postal_code:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: true
+    disabled: false
+  postal_code_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: true
+    disabled: false
+  state_province_code:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: true
+    disabled: false
+  state_province_code_cleansed:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  super_industry:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false

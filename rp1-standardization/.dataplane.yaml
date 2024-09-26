@@ -1,0 +1,174 @@
+name: rp1-standardization
+type: pyspark3.4
+version: 1.1.0
+description: Standardize RP1 Places data
+
+stages:
+- name: main
+  entrypoint: "local:///opt/app/main.py"
+  inputs:
+  - name: raw-rp1-descriptors
+    type: s3-path
+    description: S3 path to raw RP1 descriptors
+  - name: raw-rp1-locations
+    type: s3-path
+    description: S3 path to raw RP1 locations
+  outputs:
+    - name: standardized_rp1_descriptors
+      description: Contains standardized descriptors of transactions seen on the Mastercard network.
+      format: parquet
+      schema:
+      - name: rp1_mmhid
+        type: integer
+        description: Mastercard's internal identifier for a real-world merchant. Foreign key to locations table.
+      - name: rp1_original_name
+        type: varchar
+        description: original_name as delivered by rp1 in descriptors file.
+      - name: rp1_original_state
+        type: varchar
+        description: original_state as delivered by rp1 in descriptors file.
+      - name: rp1_original_city
+        type: varchar
+        description: original_city as delivered by rp1 in descriptors file.
+      - name: imputed_state
+        type: varchar
+        description: original_state as delivered by rp1, with the methodology to impute from original_city when rp1 delivers original_state as null.
+      - name: imputed_city
+        type: varchar
+        description: original_city as delivered by rp1, with the methodology to extract original_state from original_city when original_state is null.
+      - name: first_seen
+        type: date
+        description: period_start_date (from rp1-ingestion-data-plane) on which this descriptor (rp1_original_name, rp1_original_state, rp1_original_city) was seen corresponding to this rp1_mmhid for the first time. This is the day after the last delivery in which we did not observe this correspondance.
+      - name: last_seen
+        type: date
+        description: period_end_date (from rp1-ingestion-data-plane) on which this descriptor was seen corresponding to this rp1_mmhid for the last time. This is the day of the first delivery in which we observe this correspondance to change i.e. it's possible for the rp1_mmhid corresponding to a descriptor to change. Such an event would create a new record in this table.
+      - name: valid_from
+        type: date
+        description: first_seen date from which we consider this descriptor to start corresponding to this rp1_mmhid. This is set to NULL for the first rp1_mmhid a descriptor corresponds to.
+      - name: valid_until
+        type: date
+        description: date until which we consider this descriptor to correspond to this rp1_mmhid. This is set to NULL for the last rp1_mmhid that a descriptor corresponds to. A descriptor might stop appearing in rp1's delivered data, in which case we consider it to continue to correspond to the rp1_mmhid we last saw it with. In case a descriptor changes the rp1_mmhid it corresponds to, valid_until for the old descriptor+rp1_mmhid record is set to 1 day before the first_seen/valid_from date for the new descriptor+rp1_mmhid record.
+      - name: is_latest
+        type: boolean
+        description: boolean flag to indicate if this is the latest rp1_mmhid for this descriptor. This will be true when valid_until is NULL.
+    - name: standardized_rp1_locations
+      description: Contains metadata about every merchant_market_hierarchy_id for which transactions were seen on the Mastercard network. One row per mmhid + attributes + start_date (of apperaance).
+      format: parquet
+      schema:
+      - name: rp1_mmhid
+        type: integer
+        description: Mastercard's internal identifier for a real-world <merchant, payment acquirer>
+      - name: rp1_merchant_name
+        type: varchar
+        description: merchant_name as delivered by rp1 in locations file
+      - name: rp1_merchant_name_cleansed
+        type: varchar
+        description: merchant_name_cleansed as delivered by rp1 in locations file
+      - name: rp1_address
+        type: varchar
+        description: address as delivered by rp1 in locations file
+      - name: rp1_address_cleansed
+        type: varchar
+        description: address_cleansed as delivered by rp1 in locations file
+      - name: rp1_city_name
+        type: varchar
+        description: city_name as delivered by rp1 in locations file
+      - name: rp1_city_name_cleansed
+        type: varchar
+        description: city_name_cleansed as delivered by rp1 in locations file
+      - name: rp1_state_province_code
+        type: varchar
+        description: state_province_code as delivered by rp1 in locations file
+      - name: rp1_state_province_code_cleansed
+        type: varchar
+        description: state_province_code_cleansed as delivered by rp1 in locations file
+      - name: rp1_postal_code
+        type: varchar
+        description: postal_code as delivered by rp1 in locations file
+      - name: rp1_postal_code_cleansed
+        type: varchar
+        description: postal_code_cleansed as delivered by rp1 in locations file
+      - name: rp1_country_code
+        type: varchar
+        description: country_code as delivered by rp1 in locations file
+      - name: rp1_country_code_cleansed
+        type: varchar
+        description: country_code_cleansed as delivered by rp1 in locations file
+      - name: rp1_latitude
+        type: varchar
+        description: latitude as delivered by rp1 in locations file
+      - name: rp1_longitude
+        type: varchar
+        description: longitude as delivered by rp1 in locations file
+      - name: rp1_geocoding_quality_indicator
+        type: varchar
+        description: geocoding_quality_indicator as delivered by rp1 in locations file
+      - name: rp1_phone_number
+        type: varchar
+        description: phone_number as delivered by rp1 in locations file
+      - name: rp1_phone_number_cleansed
+        type: varchar
+        description: phone_number_cleansed as delivered by rp1 in locations file
+      - name: rp1_merchant_category_code
+        type: varchar
+        description: merchant_category_code as delivered by rp1 in locations file
+      - name: rp1_legal_corporate_name
+        type: varchar
+        description: legal_corporate_name as delivered by rp1 in locations file
+      - name: rp1_legal_corporate_name_cleansed
+        type: varchar
+        description: legal_corporate_name_cleansed as delivered by rp1 in locations file
+      - name: rp1_aggregate_merchant_id
+        type: varchar
+        description: aggregate_merchant_id as delivered by rp1 in locations file
+      - name: rp1_aggregate_merchant_name
+        type: varchar
+        description: aggregate_merchant_name as delivered by rp1 in locations file
+      - name: rp1_key_aggregate_merchant_id
+        type: varchar
+        description: key_aggregate_merchant_id as delivered by rp1 in locations file
+      - name: rp1_parent_aggregate_merchant_id
+        type: varchar
+        description: parent_aggregate_merchant_id as delivered by rp1 in locations file
+      - name: rp1_parent_aggregate_merchant_name
+        type: varchar
+        description: parent_aggregate_merchant_name as delivered by rp1 in locations file
+      - name: rp1_msa_code
+        type: varchar
+        description: msa_code as delivered by rp1 in locations file
+      - name: rp1_naics_code
+        type: varchar
+        description: naics_code as delivered by rp1 in locations file
+      - name: rp1_dma_code
+        type: varchar
+        description: dma_code as delivered by rp1 in locations file
+      - name: rp1_industry
+        type: varchar
+        description: industry code as delivered by rp1 in locations file
+      - name: rp1_super_industry
+        type: varchar
+        description: super_industry code as delivered by rp1 in locations file
+      - name: rp1_dun_bradstreet_number
+        type: varchar
+        description: dun_bradstreet_number as delivered by rp1 in locations file
+      - name: clean_aggregate_merchant_name
+        type: varchar
+        description: rp1_aggregate_merchant_name stripped of (ON-LINE) and (NSR) substrings
+      - name: clean_parent_aggregate_merchant_name
+        type: varchar
+        description: rp1_parent_aggregate_merchant_name stripped of (ON-LINE) and (NSR) substrings
+      - name: first_seen
+        type: date
+        description: period_start_date (from rp1-ingestion-data-plane) on which this rp1_mmhid appeared for the first time in locations table. This is the day after the last delivery in which we did not observe this correspondance.
+      - name: last_seen
+        type: date
+        description: period_end_date (from rp1-ingestion-data-plane) on which this mmhid was last seen corresponding to the current set of metadata columns in locations table. This is the day of the first delivery in which we observe this correspondance to change i.e. RP1 often updates metadata columns corresponding to an rp1_mmhid. Such an event would create a new record in this table.
+      - name: valid_from
+        type: date
+        description: first_seen date from which we consider this rp1_mmhid to start corresponding to the current set of metadata columns in locations table. This is set to NULL for the first set of metadata columns an rp1_mmhid corresponds to.
+      - name: valid_until
+        type: date
+        description: date until which we consider this rp1_mmhid to correspond to the current set of metadata columns in locations table. This is set to NULL for the last set of metadata columns an rp1_mmhid corresponds to. An rp1_mmhid might stop appearing in rp1's delivered data, in which case we consider it to continue to correspond to the set of metadata columns we last saw it with. In case an rp1_mmhid changes value of any of the metadata columns we last saw it with, valid_until for the old rp1_mmhid+metadata_cols record is set to 1 day before the first_seen/valid_from date for the new rp1_mmhid+metadata_cols record.
+      - name: is_latest
+        type: boolean
+        description: boolean flag to indicate if this is the latest record for this mmhid. This will be true when valid_until is NULL.

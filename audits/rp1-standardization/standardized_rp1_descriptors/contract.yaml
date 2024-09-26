@@ -1,0 +1,186 @@
+TABLE_LEVEL:
+- expectation_type: expect_compound_columns_to_be_unique
+  kwargs:
+    column_list:
+    - rp1_original_name
+    - rp1_original_city
+    - rp1_original_state
+    - rp1_mmhid
+    - valid_from
+    - valid_until
+    ignore_row_if: any_value_is_missing
+  meta:
+    notes: Null values are sometimes input to these fields. This messes up uniqueness. any_value_is_missing only considers non-null rows for the uniqueness constraint.
+  critical: true
+  disabled: false
+- expectation_type: expect_table_columns_to_match_set
+  kwargs:
+    column_set:
+    - rp1_original_name
+    - rp1_original_city
+    - rp1_original_state
+    - imputed_state
+    - imputed_city
+    - rp1_mmhid
+    - first_seen
+    - last_seen
+    - valid_from
+    - valid_until
+    - is_latest
+    exact_match: true
+  meta: {}
+  critical: true
+  disabled: false
+- expectation_type: expect_column_pair_values_a_to_be_greater_than_b
+  kwargs:
+    column_A: last_seen
+    column_B: first_seen
+    or_equal: false
+  meta:
+    notes: This is ok to have or_equal false as long as we don't have daily deliveries.
+- expectation_type: expect_column_pair_values_a_to_be_greater_than_b
+  kwargs:
+    column_A: valid_until
+    column_B: valid_from
+    or_equal: false
+    ignore_row_if: either_value_is_missing
+  meta:
+    notes: This is ok to have or_equal false as long as we don't have daily deliveries.
+FIELD_LEVEL:
+  rp1_original_name:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: false
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: false
+    disabled: false
+  rp1_original_state:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: false
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.5
+    meta: {}
+    critical: false
+    disabled: false
+  rp1_original_city:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: false
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: false
+    disabled: false
+  imputed_city:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.95
+    meta: {}
+    critical: false
+    disabled: false
+  imputed_state:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: StringType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      mostly: 0.5
+    meta: {}
+    critical: false
+    disabled: false
+  rp1_mmhid:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: IntegerType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_match_regex_list
+    kwargs:
+      regex_list:
+      - '[0-9]+$'
+    meta: {}
+    critical: true
+    disabled: false
+  first_seen:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DateType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  last_seen:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DateType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs: {}
+    meta: {}
+    critical: true
+    disabled: false
+  valid_from:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DateType
+    meta: {}
+    critical: true
+    disabled: false
+  valid_until:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: DateType
+    meta: {}
+    critical: true
+    disabled: false
+  is_latest:
+  - expectation_type: expect_column_values_to_be_of_type
+    kwargs:
+      type_: BooleanType
+    meta: {}
+    critical: true
+    disabled: false
+  - expectation_type: expect_column_distinct_values_to_contain_set
+    kwargs:
+      value_set:
+        - false
+        - true
+    meta: {}
+    critical: true
+    disabled: false
